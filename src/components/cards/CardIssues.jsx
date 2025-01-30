@@ -14,7 +14,8 @@ import { ImUserPlus } from "react-icons/im";
 import WaveLoader from "../ui/WaveLoader.jsx";
 
 function CardIssues() {
-  const { mutateUpdate, handleEditIssue, getAllDetails } = useContext(ActionContext);
+  const { mutateUpdate, handleEditIssue, getAllDetails } =
+    useContext(ActionContext);
   const { user } = useContext(AuthContext);
   const idProfession = user.employeeId;
 
@@ -51,15 +52,15 @@ function CardIssues() {
     const prepareDataForExcel = result.map((item) => {
       return {
         id: item._id,
-        "building": item.issue_building,
-        "floor": item.issue_floor,
-        "apartment": item.issue_apartment,
-        "description": item.issue_description,
-        "status": item.issue_status,
-        "urgency": item.issue_urgency,
-        "profession": item.issue_profession?.profession_name,
+        building: item.issue_building,
+        floor: item.issue_floor,
+        apartment: item.issue_apartment,
+        description: item.issue_description,
+        status: item.issue_status,
+        urgency: item.issue_urgency,
+        profession: item.issue_profession?.profession_name,
         "Created At": item.createdAt,
-        "Updated At": item.updatedAt,       
+        "Updated At": item.updatedAt,
       };
     });
 
@@ -137,8 +138,10 @@ function CardIssues() {
       <div className="flex flex-wrap gap-4 justify-evenly">
         {/* Issue Card */}
         {data?.map((element) => (
-          <div key={element._id}
-          className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-3xl shadow-xl w-80">
+          <div
+            key={element._id}
+            className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-3xl shadow-xl w-80"
+          >
             {/* Location Pills */}
             <div className="flex space-x-2 mb-3">
               <div className="bg-white px-3 py-1.5 rounded-xl shadow-md flex items-center space-x-2 border border-amber-100">

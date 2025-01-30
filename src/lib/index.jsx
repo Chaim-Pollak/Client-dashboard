@@ -1,4 +1,4 @@
- import * as XLSX from "xlsx";
+import * as XLSX from "xlsx";
 
 export function debounce(func, timeout = 1000) {
   // Create Variable
@@ -16,22 +16,21 @@ function adjustColumnWidths(data) {
     const maxWidth = Math.max(
       key.length,
       ...data.map((row) => (row[key] ? row[key].toString().length : 0))
-      );
+    );
     return { wch: maxWidth + 1 };
-    });
+  });
   return wsCols;
-  }
+}
 
-
-export function exportToXL(json,exelName){ 
+export function exportToXL(json, exelName) {
   // Generate XL Page
-const wb = XLSX.utils.book_new();
-// Convert Json To CheetSheet
-const ws = XLSX.utils.json_to_sheet(json)
+  const wb = XLSX.utils.book_new();
+  // Convert Json To CheetSheet
+  const ws = XLSX.utils.json_to_sheet(json);
 
-ws['!cols'] = adjustColumnWidths(json);
+  ws["!cols"] = adjustColumnWidths(json);
 
-// Create New Xl Page With Data
-XLSX.utils.book_append_sheet(wb,ws,exelName);
-XLSX.writeFile(wb,`${exelName}.xlsx`)
+  // Create New Xl Page With Data
+  XLSX.utils.book_append_sheet(wb, ws, exelName);
+  XLSX.writeFile(wb, `${exelName}.xlsx`);
 }

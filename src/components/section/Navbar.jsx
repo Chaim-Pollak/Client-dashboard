@@ -9,7 +9,7 @@ const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { user, signOut } = useContext(AuthContext);
-  const {  handleEditEmployee } = useContext(ActionContext);
+  const { handleEditEmployee } = useContext(ActionContext);
 
   return (
     <>
@@ -25,9 +25,8 @@ const Navbar = () => {
                 className="w-44 rounded"
               />
             </a>
-            
+
             <div className="hidden md:flex space-x-8">
-             
               <NavLink
                 to="/allissues"
                 className="text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"

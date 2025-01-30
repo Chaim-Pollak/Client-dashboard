@@ -35,28 +35,27 @@ function CardIssues() {
     const prepareDataForExcel = result.map((item) => {
       return {
         id: item._id,
-        "building": item.issue_building,
-        "floor": item.issue_floor,
-        "apartment": item.issue_apartment,
-        "description": item.issue_description,
-        "status": item.issue_status,
-        "urgency": item.issue_urgency,
-        "profession": item.issue_profession?.profession_name,
+        building: item.issue_building,
+        floor: item.issue_floor,
+        apartment: item.issue_apartment,
+        description: item.issue_description,
+        status: item.issue_status,
+        urgency: item.issue_urgency,
+        profession: item.issue_profession?.profession_name,
         "Created At": item.createdAt,
-        "Updated At": item.updatedAt,       
+        "Updated At": item.updatedAt,
       };
     });
-
 
     exportToXL(prepareDataForExcel, "IssuesSheet");
   }
 
-  const {  handleEditIssue } = useContext(ActionContext);
-  const {data} = useQuery({
-      queryKey: ["my_issues"],
-      queryFn: async() => axios.get(`/users/getemployeebyid/${user._id}`),
-      select: (data) => data.data.data
-  })
+  const { handleEditIssue } = useContext(ActionContext);
+  const { data } = useQuery({
+    queryKey: ["my_issues"],
+    queryFn: async () => axios.get(`/users/getemployeebyid/${user._id}`),
+    select: (data) => data.data.data,
+  });
 
   return (
     <div className="container mx-auto px-4 py-8  ">

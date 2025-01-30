@@ -1,11 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Paginaiton({listLength, limit, setPage}) {
+function Paginaiton({ listLength, limit, setPage }) {
   const pages = Math.ceil(listLength / limit);
   const btns = [];
   for (let i = 1; i < pages + 1; i++) btns.push(i);
-
 
   function nextPage() {
     setPage((page) => (pages !== page ? page + 1 : page));
@@ -51,9 +50,7 @@ function Paginaiton({listLength, limit, setPage}) {
         </ul>
       </nav>
     </div>
-
   );
 }
 
 export default Paginaiton;
-
