@@ -16,7 +16,7 @@ function MyIssuesHistory() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["get_my_history"],
     queryFn: async () =>
-      await axios.get(`/issues/gethistorybyid/${idEmployee}`),
+      await axios.get(`/issues/getHistoryById/${idEmployee}`),
     select: (data) => data.data.data,
   });
 
@@ -37,7 +37,7 @@ function MyIssuesHistory() {
   };
 
   async function downloadXl(idEmployee) {
-    const result = await getAllDetails(`/issues/gethistorybyid/${idEmployee}`);
+    const result = await getAllDetails(`/issues/getHistoryById/${idEmployee}`);
 
     if (!result) return;
     const prepareDataForExcel = result.map((item) => {
