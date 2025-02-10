@@ -347,7 +347,7 @@ function CardIssues() {
 
         {/* You can duplicate the card here for more issues */}
       </div>
-      {/* <Paginaiton listLength={data?.count} limit={limit} setPage={setPage} /> */}
+      {/* <Pagination listLength={data?.count} limit={limit} setPage={setPage} /> */}
     </div>
   );
 }
