@@ -64,11 +64,7 @@ function IssueForm() {
       navigate("/allissues");
     },
     onError: (error) => {
-      console.error(
-        "Error adding issue:",
-        error.response?.data || error.message
-      );
-      showErrorToast("Error adding issue");
+      showErrorToast(error.response.data.message);
     },
   });
 
