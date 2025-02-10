@@ -7,7 +7,7 @@ import WaveLoader from "../../ui/WaveLoader";
 function WelcomeClient() {
   const { user } = useContext(AuthContext);
 
-  const url = `/general/getalllength`;
+  const url = `/general/getDocumentCounts`;
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["get_alllength"],
