@@ -1,33 +1,36 @@
-import React, { useContext, useState } from "react";
-import axios from "axios";
+import { useState, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
-import ExportButton from "../ui/ExportButton.jsx";
-import { ActionContext } from "../contexts/ActionContext.jsx";
-import { exportToXL } from "../../lib/index.jsx";
+import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext.jsx";
-import SearchInput from "../pages/publicPages/SearchInput.jsx";
-import UseSuggestions from "../hooks/UseSuggestions.jsx";
-import { ChevronDown, Filter } from "lucide-react";
-import Button from "../ui/ButtonAddIssue.jsx";
-import SelectBox from "../pages/forms/SelectBox.jsx";
-import { ImUserPlus } from "react-icons/im";
+import { ActionContext } from "../contexts/ActionContext.jsx";
+import useSuggestions from "../hooks/useSuggestions.jsx";
+import { exportToXL } from "../../lib/index.jsx";
+import { UserPlus } from "lucide-react";
+import ExportButton from "../ui/ExportButton.jsx";
+import SearchInput from "../ui/SearchInput.jsx";
 import WaveLoader from "../ui/WaveLoader.jsx";
 
 function CardIssues() {
   const { mutateUpdate, handleEditIssue, getAllDetails } =
     useContext(ActionContext);
+
   const { user } = useContext(AuthContext);
   const idProfession = user.employeeId;
 
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [urgencyFilter, setUrgencyFilter] = useState("all");
+
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["get_issues"],
+    queryKey: ["issues", statusFilter, urgencyFilter],
     queryFn: async () =>
-      await axios.get(`/issues/allissuesbyprofession/${idProfession}`),
+      await axios.get(
+        `/issues/allIssuesByProfession/${idProfession}?status=${statusFilter}&urgency=${urgencyFilter}`
+      ),
     select: (data) => data.data.data,
-    // להכניס טוסטים
   });
 
   const [currentIndexes, setCurrentIndexes] = useState({});
+
   const nextImage = (issueId, maxLength) => {
     setCurrentIndexes((prev) => ({
       ...prev,
@@ -41,8 +44,8 @@ function CardIssues() {
       [issueId]: prev[issueId] === 0 ? maxLength - 1 : (prev[issueId] || 0) - 1,
     }));
   };
-  // search input issues
-  const [suggestions, setSearchInput] = UseSuggestions("issues");
+
+  const [suggestions, setSearchInput] = useSuggestions("issues");
   const [selected, setSelected] = useState(null);
 
   async function downloadXl() {
@@ -91,9 +94,11 @@ function CardIssues() {
             className="w-full rounded-lg border-2 border-amber-200 bg-amber-50 py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             id="status"
             name="issue_status"
-            onChange={(e) => setStatusFilterStatus(e.target.value)}
+            onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="">Filter Status</option>
+            <option value="" disabled selected>
+              Filter by Status
+            </option>
             <option value="all">All</option>
             <option value="New">New</option>
             <option value="In process">In process</option>
@@ -106,35 +111,27 @@ function CardIssues() {
             className="w-full rounded-lg border-2 border-amber-200 bg-amber-50 py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             id="urgency"
             name="issue_urgency"
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => setUrgencyFilter(e.target.value)}
           >
-            <option value="">Filter Urgency</option>
+            <option value="" disabled selected>
+              Filter by Urgency
+            </option>
             <option value="all">All</option>
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
         </div>
-
-        <div>
-          <SelectBox
-            // value={professionFilter || "all"}
-            // handleChange={(e) => setProfessionFilter(e.target.value)}
-            // onChange={(value) => setProfessionFilter(value.profession_name)}
-            placeholder="Select Profession"
-            id={"profession_name"}
-          />
-        </div>
       </div>
-      {/* </div> */}
 
-      {/* <div className="flex flex-wrap gap-4 justify-evenly"> */}
       {isLoading && (
         <div className="flex justify-center items-center h-[50vh]">
           <WaveLoader />
         </div>
       )}
+
       {isError && <div>{error}</div>}
+
       <div className="flex flex-wrap gap-4 justify-evenly">
         {/* Issue Card */}
         {data?.map((element) => (
@@ -208,6 +205,7 @@ function CardIssues() {
                 </div>
               </div>
             </div>
+
             {/* Image Carousel */}
             <div className="relative h-48 mb-4 rounded-xl overflow-hidden shadow-lg">
               <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
@@ -267,29 +265,14 @@ function CardIssues() {
                 {element.issue_images.length}
               </div>
             </div>
+
             {/* Issue Details */}
-            {/* <div className="bg-white rounded-xl p-4 shadow-md border border-amber-100 h-60"> */}
             <div className="bg-white rounded-xl p-4 shadow-md border border-amber-100 h-[180px] flex flex-col">
-              {/* <div className="flex items-center justify-between mb-3"> */}
               <div className="flex items-center justify-between mb-3">
                 <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium border border-yellow-200">
                   {element.issue_status}
                 </span>
-                <div className="flex items-center space-x-1 text-amber-600">
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                    //   strokeLinecap="round"
-                    //   strokeLinejoin="round"
-                    //   strokeWidth={2}
-                    //   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span>{element.issue_profession?.profession_name}</span>
+                <div className="flex items-center space-x-1 text-amber-600 text-sm">
                   <button
                     onClick={() =>
                       mutateUpdate({
@@ -298,15 +281,13 @@ function CardIssues() {
                       })
                     }
                   >
-                    <ImUserPlus title="Handle the problem" />
+                    {!element.employees ? <UserPlus size={16} /> : ""}
                   </button>
                   <span>{element.employees?.employeeName}</span>
                 </div>
               </div>
 
-              {/* <div className="max-h-24 overflow-y-auto scrollbar-thin scrollbar-thumb-amber-200 scrollbar-track-amber-50 pr-2"> */}
               <div className="flex-1 overflow-y-auto hover:overflow-y-scroll pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-amber-100 [&::-webkit-scrollbar-track]:rounded-lg [&::-webkit-scrollbar-thumb]:bg-amber-500 [&::-webkit-scrollbar-thumb]:rounded-lg [&::-webkit-scrollbar-thumb]:hover:bg-amber-600">
-                {/* <h3 className="text-base font-bold text-amber-900"> */}
                 <h3 className="text-base font-bold text-amber-900">
                   {element.issue_description}
                 </h3>
@@ -344,8 +325,6 @@ function CardIssues() {
             </div>
           </div>
         ))}
-
-        {/* You can duplicate the card here for more issues */}
       </div>
       {/* <Pagination listLength={data?.count} limit={limit} setPage={setPage} /> */}
     </div>

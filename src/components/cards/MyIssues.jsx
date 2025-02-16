@@ -1,16 +1,15 @@
 import React, { useContext, useState } from "react";
-import ExportButton from "../ui/ExportButton.jsx";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { exportToXL } from "../../lib";
 import { ActionContext } from "../contexts/ActionContext.jsx";
 import { AuthContext } from "../contexts/AuthContext.jsx";
-import { use } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import ExportButton from "../ui/ExportButton.jsx";
+import WaveLoader from "../ui/WaveLoader.jsx";
 
-function CardIssues() {
+function MyIssues() {
   const { user } = useContext(AuthContext);
-  const { getAllDetails } = useContext(ActionContext);
-  console.log(user);
+  const { getAllDetails, handleEditIssue } = useContext(ActionContext);
 
   const [currentIndexes, setCurrentIndexes] = useState({});
 
@@ -50,10 +49,9 @@ function CardIssues() {
     exportToXL(prepareDataForExcel, "IssuesSheet");
   }
 
-  const { handleEditIssue } = useContext(ActionContext);
-  const { data } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["my_issues"],
-    queryFn: async () => axios.get(`/users/getemployeebyid/${user._id}`),
+    queryFn: async () => axios.get(`/users/getEmployeeById/${user._id}`),
     select: (data) => data.data.data,
   });
 
@@ -62,11 +60,14 @@ function CardIssues() {
       <div className="flex-1 text-center">
         <h1 className="text-2xl font-bold text-amber-900">My Issues</h1>
       </div>
+
       <ExportButton download={downloadXl} />
+
       <div className="flex flex-wrap flex-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-evenly">
-        {/* Issue Card */}
-        {/* {isLoading && <div>Loading...</div>}
-        {isError && <div>{error}</div>} */}
+        {isLoading && <WaveLoader />}
+
+        {isError && <div>{error}</div>}
+
         {data?.map((issue) => (
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-3xl shadow-xl w-80">
             {/* Location Pills */}
@@ -135,6 +136,7 @@ function CardIssues() {
                 </div>
               </div>
             </div>
+
             {/* Image Carousel */}
             <div className="relative h-48 mb-4 rounded-xl overflow-hidden shadow-lg">
               <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
@@ -192,39 +194,16 @@ function CardIssues() {
                 {issue.issue_images.length}
               </div>
             </div>
+
             {/* Issue Details */}
-            {/* <div className="bg-white rounded-xl p-4 shadow-md border border-amber-100 h-60"> */}
             <div className="bg-white rounded-xl p-4 shadow-md border border-amber-100 h-[180px] flex flex-col">
-              {/* <div className="flex items-center justify-between mb-3"> */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-center mb-3">
                 <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium border border-yellow-200">
                   {issue.issue_status}
                 </span>
-                <div className="flex items-center space-x-1 text-amber-600">
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-
-                  <span>{issue.employees?.employeeName}</span>
-                  <span>
-                    {issue.employees?.issue_profession?.profession_name}
-                  </span>
-                </div>
               </div>
 
-              {/* <div className="max-h-24 overflow-y-auto scrollbar-thin scrollbar-thumb-amber-200 scrollbar-track-amber-50 pr-2"> */}
               <div className="flex-1 overflow-y-auto hover:overflow-y-scroll pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-amber-100 [&::-webkit-scrollbar-track]:rounded-lg [&::-webkit-scrollbar-thumb]:bg-amber-500 [&::-webkit-scrollbar-thumb]:rounded-lg [&::-webkit-scrollbar-thumb]:hover:bg-amber-600">
-                {/* <h3 className="text-base font-bold text-amber-900"> */}
                 <h3 className="text-base font-bold text-amber-900">
                   {issue.issue_description}
                 </h3>
@@ -267,4 +246,4 @@ function CardIssues() {
   );
 }
 
-export default CardIssues;
+export default MyIssues;

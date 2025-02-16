@@ -10,9 +10,9 @@ import { ActionContext } from "../contexts/ActionContext.jsx";
 function MyIssuesHistory() {
   const { user } = useContext(AuthContext);
   const { getAllDetails } = useContext(ActionContext);
-  console.log(user);
 
   const idEmployee = user._id;
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["get_my_history"],
     queryFn: async () =>
@@ -62,15 +62,15 @@ function MyIssuesHistory() {
       <div className="flex-1 text-center">
         <h1 className="text-2xl font-bold text-amber-900">My Issues History</h1>
       </div>
+
       <ExportButton download={downloadXl} />
+
       <div className="flex flex-wrap flex-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-evenly">
         {/* Issue Card */}
-        {isLoading && (
-          <div className="flex justify-center items-center h-[50vh]">
-            <WaveLoader />
-          </div>
-        )}
+        {isLoading && <WaveLoader />}
+
         {isError && <div>{error}</div>}
+
         {data?.map((issue) => (
           <div
             key={issue._id}
@@ -142,6 +142,7 @@ function MyIssuesHistory() {
                 </div>
               </div>
             </div>
+
             {/* Image Carousel */}
             <div className="relative h-48 mb-4 rounded-xl overflow-hidden shadow-lg">
               <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
@@ -197,59 +198,17 @@ function MyIssuesHistory() {
                 {issue.issue_images.length}
               </div>
             </div>
+
             {/* Issue Details */}
-            {/* <div className="bg-white rounded-xl p-4 shadow-md border border-amber-100 h-60"> */}
             <div className="bg-white rounded-xl p-4 shadow-md border border-amber-100 h-[180px] flex flex-col">
-              {/* <div className="flex items-center justify-between mb-3"> */}
-              <div className="flex items-center justify-between mb-3">
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium border border-yellow-200">
-                  {issue.issue_status}
-                </span>
-                <div className="flex items-center space-x-1 text-amber-600">
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-
-                  <span>{issue.issue_profession?.profession_name}</span>
-                </div>
-              </div>
-
-              {/* <div className="max-h-24 overflow-y-auto scrollbar-thin scrollbar-thumb-amber-200 scrollbar-track-amber-50 pr-2"> */}
               <div className="flex-1 overflow-y-auto hover:overflow-y-scroll pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-amber-100 [&::-webkit-scrollbar-track]:rounded-lg [&::-webkit-scrollbar-thumb]:bg-amber-500 [&::-webkit-scrollbar-thumb]:rounded-lg [&::-webkit-scrollbar-thumb]:hover:bg-amber-600">
-                {/* <h3 className="text-base font-bold text-amber-900"> */}
                 <h3 className="text-base font-bold text-amber-900">
                   {issue.issue_description}
                 </h3>
               </div>
 
-              <div className="mt-4 flex justify-between items-center pt-3 border-t border-amber-100">
-                <div className="flex items-center space-x-1">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-100 text-red-600">
-                    <svg
-                      className="w-3 h-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </span>
-                </div>
+              <div className="mt-4 flex justify-center items-center pt-3 border-t border-amber-100 text-amber-600">
+                <span>Done</span>
               </div>
             </div>
           </div>
