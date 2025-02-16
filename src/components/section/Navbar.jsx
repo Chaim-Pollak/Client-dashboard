@@ -5,10 +5,10 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useContext } from "react";
 import { ActionContext } from "../contexts/ActionContext";
 
-const Navbar = () => {
+function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { user, signOut } = useContext(AuthContext);
+  const { user, handleLogout } = useContext(AuthContext);
   const { handleEditEmployee } = useContext(ActionContext);
 
   return (
@@ -18,7 +18,7 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             {/* Logo */}
-            <a href="/welcomepage" className="flex-shrink-0">
+            <a href="/" className="flex-shrink-0">
               <img
                 src="https://res.cloudinary.com/dl8slx4ca/image/upload/v1735766284/cromi0bys1fd2k7q7dgl.png"
                 alt="Logo"
@@ -28,20 +28,20 @@ const Navbar = () => {
 
             <div className="hidden md:flex space-x-8">
               <NavLink
-                to="/allissues"
+                to="/allIssues"
                 className="text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
               >
                 All Issues
               </NavLink>
 
               <NavLink
-                to="/myissue"
+                to="/myIssue"
                 className="text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
               >
                 My Issues
               </NavLink>
               <NavLink
-                to="/myissuehistory"
+                to="/myIssueHistory"
                 className="text-white hover:bg-white/20 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
               >
                 My Issues History
@@ -73,7 +73,7 @@ const Navbar = () => {
                       Profile
                     </button>
                     <button
-                      onClick={() => signOut()}
+                      onClick={() => handleLogout()}
                       className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       <LogOut className="h-4 w-4 mr-2" />
@@ -127,7 +127,7 @@ const Navbar = () => {
               <div className="px-4 py-2">
                 <NavLink
                   onClick={() => setIsSidebarOpen(false)}
-                  to="/allissues"
+                  to="/allIssues"
                   className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-lg"
                 >
                   All Issues
@@ -137,13 +137,13 @@ const Navbar = () => {
                     mutateMyIssue({ id: user._id });
                     setIsSidebarOpen(false);
                   }}
-                  to="/myissue"
+                  to="/myIssue"
                   className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-lg"
                 >
                   My Issues
                 </NavLink>
                 <NavLink
-                  to="/myissuehistory"
+                  to="/myIssueHistory"
                   className="block py-2 px-4 text-gray-700 hover:bg-gray-100 rounded-lg"
                   onClick={() => setIsSidebarOpen(false)}
                 >
@@ -173,7 +173,7 @@ const Navbar = () => {
                     Profile
                   </button>
                   <button
-                    onClick={() => signOut()}
+                    onClick={() => handleLogout()}
                     className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
@@ -187,6 +187,6 @@ const Navbar = () => {
       </div>
     </>
   );
-};
+}
 
 export default Navbar;

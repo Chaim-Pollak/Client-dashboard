@@ -39,18 +39,14 @@ function NavPublic() {
             >
               Contact Us
             </NavLink>
-            <NavLink
-              to={"/Offices"}
-              className="text-amber-900 hover:bg-amber-50 px-3 py-2 rounded-lg text-xl font-medium transition-colors duration-200"
-            >
-              Offices
-            </NavLink>
           </div>
           {/* Right side - Login Button */}
           <div className="flex items-center">
-            <button className="bg-amber-600 text-white px-6 py-2 rounded-xl hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors duration-200 font-medium">
-              <NavLink to={"/login"}>Login</NavLink>
-            </button>
+            <NavLink to={"/login"}>
+              <button className="bg-amber-600 text-white px-6 py-2 rounded-xl hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors duration-200 font-medium">
+                Login
+              </button>
+            </NavLink>
           </div>
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">

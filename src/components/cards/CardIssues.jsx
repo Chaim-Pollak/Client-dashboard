@@ -9,9 +9,10 @@ import { UserPlus } from "lucide-react";
 import ExportButton from "../ui/ExportButton.jsx";
 import SearchInput from "../ui/SearchInput.jsx";
 import WaveLoader from "../ui/WaveLoader.jsx";
+import TimeAgo from "../../lib/TimeAgo.jsx";
 
 function CardIssues() {
-  const { mutateUpdate, handleEditIssue, getAllDetails } =
+  const { mutateUpdateAssociate, handleEditIssue, getAllDetails } =
     useContext(ActionContext);
 
   const { user } = useContext(AuthContext);
@@ -70,6 +71,12 @@ function CardIssues() {
     exportToXL(prepareDataForExcel, "IssuesSheet");
   }
 
+  const [updatedTime, setUpdatedTime] = useState("");
+
+  const handleTimeUpdate = (time) => {
+    setUpdatedTime(time);
+  };
+
   return (
     <div className="w-[80%] mx-auto mt-5 p-4 rounded-xl mb-6 animate-slide-down">
       <div className=" bg-white border-solid border-2 border-amber-300  my-auto p-4 shadow-md rounded-xl mb-6 animate-slide-down flex flex-wrap gap-4 items-center justify-between">
@@ -81,6 +88,7 @@ function CardIssues() {
           onClick={(current) => {
             setSelected(current);
           }}
+          placeholder={"Search by building..."}
         />
 
         <div className="flex-1 text-center">
@@ -273,15 +281,21 @@ function CardIssues() {
                   {element.issue_status}
                 </span>
                 <div className="flex items-center space-x-1 text-amber-600 text-sm">
+                  <TimeAgo
+                    date={element.createdAt}
+                    onTimeUpdate={handleTimeUpdate}
+                  />
+                </div>
+                <div className="flex items-center space-x-1 text-amber-600 text-sm">
                   <button
                     onClick={() =>
-                      mutateUpdate({
+                      mutateUpdateAssociate({
                         issues: element._id,
                         employees: user?._id,
                       })
                     }
                   >
-                    {!element.employees ? <UserPlus size={16} /> : ""}
+                    <UserPlus size={16} />
                   </button>
                   <span>{element.employees?.employeeName}</span>
                 </div>

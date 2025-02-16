@@ -8,31 +8,31 @@ import {
 } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./components/contexts/AuthContext";
+
 import Navbar from "./components/section/Navbar";
-import ButtonAddIssue from "./components/ui/ButtonAddIssue";
+import AddIssueButton from "./components/ui/AddIssueButton";
 import IssueModal from "./components/modal/IssueModal";
 import EmployeeModal from "./components/modal/employeeModal";
 import BackgroundLayout from "./components/ui/BackgroundLayout";
 import NavPublic from "./components/section/NavPublic";
 
-function ProtectedRoute({ isAuth }) {
-  return isAuth ? <Outlet /> : <Navigate to="/" replace />;
-}
+const ProtectedRoute = ({ isAuth }) =>
+  isAuth ? <Outlet /> : <Navigate to="/" replace />;
 
 function Root({ isAuth }) {
-  console.log(isAuth);
   return (
     <>
       <BackgroundLayout>
         {isAuth ? (
           <>
             <Navbar />
-            <ButtonAddIssue />
+            <AddIssueButton />
           </>
         ) : (
           <NavPublic />
         )}
         <Outlet />
+
         <IssueModal />
         <EmployeeModal />
       </BackgroundLayout>
@@ -47,7 +47,7 @@ function App() {
     createRoutesFromElements(
       <Route path="/" element={<Root isAuth={isAuth} />}>
         {/* Public Routes */}
-        <Route element={isAuth ? <Navigate to={"/welcomepage"} /> : <Outlet />}>
+        <Route element={isAuth ? <Navigate to={"/welcomePage"} /> : <Outlet />}>
           <Route
             index
             lazy={async () => ({
@@ -67,7 +67,7 @@ function App() {
 
         <Route element={<ProtectedRoute isAuth={isAuth} />}>
           <Route
-            path="welcomepage"
+            path="welcomePage"
             lazy={async () => ({
               Component: (
                 await import("./components/pages/privatePages/WelcomePage")
@@ -76,27 +76,27 @@ function App() {
           />
 
           <Route
-            path="addissue"
+            path="addIssue"
             lazy={async () => ({
               Component: (await import("./components/pages/forms/IssueForm"))
                 .default,
             })}
           />
           <Route
-            path="myissue"
+            path="myIssue"
             lazy={async () => ({
               Component: (await import("./components/cards/MyIssues")).default,
             })}
           />
           <Route
-            path="allissues"
+            path="allIssues"
             lazy={async () => ({
               Component: (await import("./components/cards/CardIssues"))
                 .default,
             })}
           />
           <Route
-            path="myissuehistory"
+            path="myIssueHistory"
             lazy={async () => ({
               Component: (await import("./components/cards/MyIssuesHistory"))
                 .default,
@@ -128,14 +128,6 @@ function App() {
               await import(
                 "./components/pages/publicPages/mainPage/ContactPage"
               )
-            ).default,
-          })}
-        />
-        <Route
-          path="Offices"
-          lazy={async () => ({
-            Component: (
-              await import("./components/pages/publicPages/mainPage/Offices")
             ).default,
           })}
         />

@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ActionContext } from "../../contexts/ActionContext";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import SelectBox from "./SelectBox";
-import { data, useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
-import { date } from "yup";
+import axios from "axios";
+import { ActionContext } from "../../contexts/ActionContext";
 import { showErrorToast, showSuccessToast } from "../../../lib/Toast";
+import ProfessionSelectBox from "./ProfessionSelectBox";
+import { X } from "lucide-react";
 
 const initialValues = {
   issue_building: "",
@@ -17,18 +16,17 @@ const initialValues = {
 };
 
 function IssueForm() {
-  const { iss, setIss } = useContext(ActionContext);
+  const { activeIssue, setActiveIssue } = useContext(ActionContext);
   const [values, setValues] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate } = useMutation({
+  const { mutate: editMutate } = useMutation({
     mutationKey: ["edit issue"],
     mutationFn: async ({ values, id }) =>
       await axios.put(`issues/update/${id}`, values),
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: (msg) => {
       document.getElementById("issue_modal").close();
       queryClient.invalidateQueries({
         queryKey: ["get_issues"],
@@ -36,17 +34,12 @@ function IssueForm() {
       queryClient.invalidateQueries({
         queryKey: ["my_issues"],
       });
-      showSuccessToast("Issue updated successfully");
-      setIss(null);
+      showSuccessToast(msg.data.message);
+      setActiveIssue(null);
     },
 
     onError: (error) => {
-      console.error(
-        "Error adding issue:",
-        error.response?.data || error.message
-      );
-      document.getElementById("issue_modal").close();
-      showErrorToast("Error updating issue");
+      showErrorToast(error.response.data.message);
     },
   });
 
@@ -54,14 +47,12 @@ function IssueForm() {
     mutationKey: ["add_issue"],
     mutationFn: async (formData) =>
       await axios.post("/issues/addIssues", formData),
-    onSuccess: (data) => {
-      console.log("Issue added successfully:", data);
+    onSuccess: (msg) => {
       queryClient.invalidateQueries({ queryKey: ["get_issues"] });
-      showSuccessToast("Issue added successfully");
-      // setUploadedFiles([]);
+      showSuccessToast(msg.data.message);
 
-      setIss(null);
-      navigate("/allissues");
+      setActiveIssue(null);
+      navigate("/allIssues");
     },
     onError: (error) => {
       showErrorToast(error.response.data.message);
@@ -73,7 +64,7 @@ function IssueForm() {
     setValues({ ...values, [name]: value });
   }
 
-  function handlesubmit(e) {
+  function handleSubmit(e) {
     try {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
@@ -81,17 +72,19 @@ function IssueForm() {
       uploadedFiles.forEach(({ file }) => {
         formData.append("issue_images", file);
       });
-      iss ? mutate({ values, id: values?._id }) : addMutate(formData);
+      activeIssue
+        ? editMutate({ values, id: values?._id })
+        : addMutate(formData);
     } catch (error) {
       console.log(error);
     }
   }
 
   useEffect(() => {
-    if (!iss) return setValues(initialValues);
+    if (!activeIssue) return setValues(initialValues);
 
-    setValues({ ...iss });
-  }, [iss]);
+    setValues({ ...activeIssue });
+  }, [activeIssue]);
 
   const removeFile = (fileId) => {
     setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
@@ -110,22 +103,22 @@ function IssueForm() {
   };
 
   function handleCancel() {
-    if (!iss) {
-      navigate("/allissues");
+    if (!activeIssue) {
+      navigate("/allIssues");
     } else {
       document.getElementById("issue_modal").close();
-      setIss(null);
+      setActiveIssue(null);
     }
   }
+
   return (
     <div className=" w-full p-4 flex items-center justify-center ">
       <div className="bg-orange-50 p-4 md:p-6 rounded-2xl shadow-lg w-full max-w-4xl h-[85vh] flex flex-col">
-        {/* כותרת */}
         <h2 className="text-xl md:text-2xl font-bold text-amber-900 mb-2 md:mb-2 text-center">
-          {!iss ? "Add Issue" : "Edit Issue"}
+          {!activeIssue ? "Add Issue" : "Edit Issue"}
         </h2>
 
-        <form onSubmit={handlesubmit} className="flex-1 overflow-y-aut">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-aut">
           <div className="space-y-4 bg-white p-4 md:p-6 rounded-xl shadow-sm">
             {/* Location and Basic Details Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -143,7 +136,6 @@ function IssueForm() {
                   value={values?.issue_building}
                   onChange={handleChange}
                   required
-                  // disabled={!!iss}
                 >
                   <option value="">Select Building</option>
                   <option value="A">Building A</option>
@@ -166,7 +158,6 @@ function IssueForm() {
                   value={values?.issue_floor}
                   onChange={handleChange}
                   required
-                  // disabled={!!iss}
                 >
                   <option value="">Select Floor</option>
                   <option value="1">1st Floor</option>
@@ -191,7 +182,6 @@ function IssueForm() {
                   value={values?.issue_apartment}
                   onChange={handleChange}
                   required
-                  // disabled={!!iss}
                   placeholder="Enter apartment number"
                   className="w-full rounded-lg border-2 border-amber-200 bg-amber-50 py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                 />
@@ -204,7 +194,7 @@ function IssueForm() {
                 >
                   Profession
                 </label>
-                <SelectBox
+                <ProfessionSelectBox
                   value={
                     values?.issue_profession._id || values?.issue_profession
                   }
@@ -212,6 +202,7 @@ function IssueForm() {
                   id={"issue_profession"}
                 />
               </div>
+
               {/* Urgency Selection */}
               <div>
                 <label
@@ -234,7 +225,8 @@ function IssueForm() {
                   <option value="high">High</option>
                 </select>
               </div>
-              {iss && (
+
+              {activeIssue && (
                 <div>
                   <label
                     className="block text-sm font-medium text-amber-700 mb-1"
@@ -279,7 +271,7 @@ function IssueForm() {
             </div>
 
             {/* Image Upload with Fixed Height */}
-            {!iss && (
+            {!activeIssue && (
               <div>
                 <label className=" block text-sm font-medium text-amber-700 mb-1">
                   Add Images
@@ -343,23 +335,16 @@ function IssueForm() {
             <div className="flex justify-end space-x-4 pt-4">
               <button
                 type="button"
-                className="px-6 py-2 border-2 border-amber-600 text-amber-600 rounded-xl hover:bg-amber-50 focus:outline-none focus:ring-2
-               focus:ring-amber-500 focus:ring-offset-2 transition-colors
-                duration-200"
+                className="px-6 py-2 border-2 border-amber-600 text-amber-600 rounded-xl hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors duration-200"
                 onClick={handleCancel}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-amber-600 text-white 
-              rounded-xl hover:bg-amber-700 focus:outline-none
-               focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
-                transition-colors duration-200"
-                // disabled={mutation.isLoading}
+                className="px-6 py-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors duration-200"
               >
-                {!iss ? "Add Issue" : "Edit Issue"}
-                {/* {mutation.isLoading ? "Submitting..." : "Submit Issue"} */}
+                {!activeIssue ? "Add Issue" : "Edit Issue"}
               </button>
             </div>
           </div>

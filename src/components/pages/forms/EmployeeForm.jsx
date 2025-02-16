@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ActionContext } from "../../contexts/ActionContext";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import SelectBox from "./SelectBox";
+import { ActionContext } from "../../contexts/ActionContext";
+import ProfessionSelectBox from "./ProfessionSelectBox";
 import { showErrorToast, showSuccessToast } from "../../../lib/Toast";
 
 const initialValues = {
@@ -20,31 +20,22 @@ function EditEmployeeForm() {
 
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
-    mutationKey: ["edit employee"],
+  const { mutate: editMutate } = useMutation({
+    mutationKey: ["edit_employee"],
     mutationFn: async ({ values, id }) =>
       await axios.put(`users/employee/update/${id}`, values),
-    onSuccess: () => {
+    onSuccess: (msg) => {
       queryClient.invalidateQueries({ queryKey: ["get_employees"] });
       document.getElementById("employee_modal").close();
-      showSuccessToast("Profile updated successfully");
+      showSuccessToast(msg.data.message);
     },
-    onError: () => {
-      document.getElementById("employee_modal").close();
-      showErrorToast("Failed to update profile");
+
+    onError: (error) => {
+      showErrorToast(error.response.data.message);
     },
   });
-  const { mutate: addMutate } = useMutation({
-    mutationKey: ["add_employee"],
-    mutationFn: async (values) =>
-      await axios.post(`users/employee/signup`, values),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get_employee"] });
-      document.getElementById("employee_modal").close();
-    },
-    // onError:
-  });
-  const { emp } = useContext(ActionContext);
+
+  const { employee } = useContext(ActionContext);
   const [values, setValues] = useState(null);
   const [displayValue, setDisplayValue] = useState("********");
 
@@ -62,44 +53,34 @@ function EditEmployeeForm() {
     setDisplayValue(value);
   }
 
-  async function handlesubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     try {
-      mutate({ values, id: values?._id });
-      //   setValues(values);
+      editMutate({ values, id: values?._id });
     } catch (error) {
       console.log(error);
     }
   }
 
-  console.log(values);
-
   useEffect(() => {
-    if (!emp) return setValues(initialValues);
-    setValues({ ...emp });
-  }, [emp]);
+    if (!employee) return setValues(initialValues);
+    setValues({ ...employee });
+  }, [employee]);
 
   function handleCancel() {
     {
-      !emp && setValues(initialValues);
+      !employee && setValues(initialValues);
     }
     document.getElementById("employee_modal").close();
   }
+
   return (
-    <div
-      className="bg-orange-50 p-6 rounded-2xl 
-    shadow-lg max-w-2xl mx-auto"
-    >
+    <div className="bg-orange-50 p-6 rounded-2xl shadow-lg max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold text-amber-900 mb-6 text-center">
-        {!emp
-          ? "Add Employee"
-          : emp?.bySearch
-            ? "View Employee"
-            : "Edit Employee"}
+        Edit Profile
       </h2>
 
-      <form onSubmit={handlesubmit} className="space-y-6">
-        {/* Personal Information Section */}
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white p-6 rounded-xl shadow-sm space-y-4">
           <h3 className="text-lg text-center font-semibold text-amber-800 mb-4">
             Personal Information
@@ -169,7 +150,7 @@ function EditEmployeeForm() {
               >
                 Profession
               </label>
-              <SelectBox
+              <ProfessionSelectBox
                 value={values?.employeeId?._id || values?.employeeId}
                 handleChange={handleChange}
                 placeholder="Select Profession"
@@ -192,11 +173,7 @@ function EditEmployeeForm() {
             type="submit"
             className="px-6 py-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors duration-200"
           >
-            {!emp
-              ? "Add Employee"
-              : emp?.bySearch
-                ? "Edit Employee"
-                : "Edit Employee"}
+            Edit Profile
           </button>
         </div>
       </form>

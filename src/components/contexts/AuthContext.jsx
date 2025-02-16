@@ -40,6 +40,10 @@ function AuthProvider({ children }) {
     authUser();
   }, []);
 
+  useEffect(() => {
+    console.log("Updated User in Context:", user);
+  }, [user]);
+
   async function handleLogout() {
     try {
       const { data } = await axios.get("/users/logout");

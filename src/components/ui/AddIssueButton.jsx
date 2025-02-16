@@ -2,7 +2,7 @@ import React from "react";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-function ButtonAddIssue() {
+function AddIssueButton() {
   const navigate = useNavigate();
 
   return (
@@ -21,4 +21,4 @@ function ButtonAddIssue() {
   );
 }
 
-export default ButtonAddIssue;
+export default AddIssueButton;

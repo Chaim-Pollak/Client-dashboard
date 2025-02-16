@@ -1,7 +1,7 @@
-import { useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 import WaveLoader from "../../ui/WaveLoader";
 
 function WelcomeClient() {
@@ -10,7 +10,7 @@ function WelcomeClient() {
   const url = `/general/getDocumentCounts`;
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["get_alllength"],
+    queryKey: ["get_allLength"],
     queryFn: async () => (await axios.get(url)).data,
     select: (data) => ({
       countIssue: data.countIssue,
@@ -74,7 +74,7 @@ function WelcomeClient() {
             </div>
           </div>
 
-          {/* Quick Actions */}
+          {/* Quick Actions //TODO does not active */}
           <div className="flex justify-center space-x-4">
             <button className="px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
               View Dashboard
