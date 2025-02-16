@@ -1,27 +1,25 @@
-import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-import { showSuccessToast, showErrorToast } from "../../lib/Toast";
+import axios from "axios";
 import ActionProvider from "./ActionContext";
+import { showSuccessToast, showErrorToast } from "../../lib/Toast";
 
 export const AuthContext = createContext();
 
 function AuthProvider({ children }) {
-  // console.log(children)
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState(null);
 
   async function handleLogin(values) {
     try {
-      const { data } = await axios.post("/users/employee/signin", values);
+      const { data } = await axios.post("/users/employee/login", values);
       if (data.success) {
-        showSuccessToast("Signed-in user:", data?.data?.employeeName); //TODO not working
         setIsAuth(true);
         setUser(data.data);
+        showSuccessToast(data.message);
         return true;
       }
     } catch (error) {
-      const msg = error.response.data.error;
-      showErrorToast(msg);
+      showErrorToast(error.response.data.error);
       return false;
     }
   }
@@ -42,14 +40,12 @@ function AuthProvider({ children }) {
     authUser();
   }, []);
 
-  async function signOut() {
+  async function handleLogout() {
     try {
-      const { data } = await axios.get("/users/manager/logout");
+      const { data } = await axios.get("/users/logout");
       setIsAuth(false);
-      console.log(data);
       showSuccessToast(data.message);
     } catch (error) {
-      console.log(error);
       showErrorToast(error.response.data.error);
     }
   }
@@ -58,7 +54,7 @@ function AuthProvider({ children }) {
     handleLogin,
     user,
     isAuth,
-    signOut,
+    handleLogout,
   };
 
   return (

@@ -1,37 +1,37 @@
 import axios from "axios";
 import { createContext, useState } from "react";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showErrorToast, showSuccessToast } from "../../lib/Toast";
 
 export const ActionContext = createContext();
 
 function ActionProvider({ children }) {
-  const [iss, setIss] = useState(null);
-  const [emp, setEmp] = useState(null);
+  const [activeIssue, setActiveIssue] = useState(null);
+  const [employee, setActiveEmployee] = useState(null);
 
-  const quaryClient = useQueryClient();
-  const { mutate: mutateUpdate } = useMutation({
-    mutationKey: ["update_issue"],
-    mutationFn: async (idEmpIss) => axios.put("/issues/updateissue", idEmpIss),
-    onSuccess: () => {
-      quaryClient.invalidateQueries({ queryKey: ["get_issues"] });
-      showSuccessToast("issue successfully associated"); //TODO adding the real message
+  const queryClient = useQueryClient();
+  const { mutate: mutateUpdateAssociate } = useMutation({
+    mutationKey: ["associate_issue"],
+    mutationFn: async (idEmpIss) =>
+      axios.put("/issues/updateIssueAssociate", idEmpIss),
+    onSuccess: (msg) => {
+      queryClient.invalidateQueries({ queryKey: ["issues"] });
+      showSuccessToast(msg.data.message);
     },
-    onError: () => {
-      showErrorToast("Failed to update issue"); //TODO adding the real message
+    onError: (error) => {
+      showErrorToast(error.response.data.message);
     },
   });
 
   function handleEditIssue(issue) {
     console.log(issue);
     document.getElementById("issue_modal").showModal();
-    setIss(issue);
+    setActiveIssue(issue);
   }
 
   function handleEditEmployee(employee) {
     document.getElementById("employee_modal").showModal();
-    setEmp(employee);
+    setActiveEmployee(employee);
   }
 
   async function getAllDetails(url) {
@@ -46,12 +46,12 @@ function ActionProvider({ children }) {
   }
 
   const value = {
-    mutateUpdate,
-    setIss,
+    activeIssue,
+    setActiveIssue,
+    employee,
+    mutateUpdateAssociate,
     handleEditIssue,
-    iss,
     handleEditEmployee,
-    emp,
     getAllDetails,
   };
 
