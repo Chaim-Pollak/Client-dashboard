@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { debounce } from "../../lib/Index";
+import { debounce } from "../../lib/index";
 
-const UseSuggestions = (url) => {
+const useSuggestions = (url) => {
   const [searchInput, setSearchInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
@@ -15,7 +15,7 @@ const UseSuggestions = (url) => {
             cancelToken: source.token,
           }
         );
-        setSuggestions(data.result);
+        setSuggestions(data.data);
       } else setSuggestions([]);
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -40,4 +40,4 @@ const UseSuggestions = (url) => {
   return [suggestions, setSearchInput];
 };
 
-export default UseSuggestions;
+export default useSuggestions;
