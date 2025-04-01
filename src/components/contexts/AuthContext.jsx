@@ -40,9 +40,9 @@ function AuthProvider({ children }) {
     authUser();
   }, []);
 
-  useEffect(() => {
-    console.log("Updated User in Context:", user);
-  }, [user]);
+  //   useEffect(() => {
+  //     console.log("Updated User in Context:", user);
+  //   }, [user]);
 
   async function handleLogout() {
     try {

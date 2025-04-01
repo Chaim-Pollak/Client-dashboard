@@ -25,7 +25,7 @@ function WelcomeClient() {
           <WaveLoader />
         </div>
       ) : (
-        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 p-8 rounded-2xl shadow-lg max-w-3xl mx-auto ">
+        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 p-8 rounded-2xl shadow-lg max-w-3xl mx-auto max-lg:mx-4">
           <div className="flex justify-center mb-6 space-x-2">
             {[...Array(5)].map((_, i) => (
               <div
@@ -43,8 +43,8 @@ function WelcomeClient() {
             </h1>
             <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto rounded-full mb-4" />
             <p className="text-amber-700 text-lg">
-              Your command center for managing everything as{" "}
-              <span className="text-amber-800 font-bold">Employee</span>.
+              Your command center for managing everything as
+              <span className="text-amber-800 font-extrabold"> Employee</span>.
             </p>
           </div>
 
@@ -72,16 +72,6 @@ function WelcomeClient() {
               </div>
               <div className="text-2xl font-bold text-amber-900">12</div>
             </div>
-          </div>
-
-          {/* Quick Actions //TODO does not active */}
-          <div className="flex justify-center space-x-4">
-            <button className="px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
-              View Dashboard
-            </button>
-            <button className="px-6 py-3 bg-white text-amber-700 rounded-xl hover:bg-amber-50 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
-              Manage Users
-            </button>
           </div>
 
           {/* Decorative Bottom Pattern */}

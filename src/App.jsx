@@ -65,6 +65,13 @@ function App() {
           />
         </Route>
 
+        <Route
+          path="*"
+          lazy={async () => ({
+            Component: (await import("./components/ui/ErrorPage")).default,
+          })}
+        />
+
         <Route element={<ProtectedRoute isAuth={isAuth} />}>
           <Route
             path="welcomePage"
