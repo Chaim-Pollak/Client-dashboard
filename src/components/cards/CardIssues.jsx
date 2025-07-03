@@ -4,7 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext.jsx";
 import { ActionContext } from "../contexts/ActionContext.jsx";
 import { exportToXL } from "../../lib/index.jsx";
-import useSuggestions from "../hooks/useSuggestions.jsx";
+import useSuggestions from "../../components/hooks/useSuggestions.jsx";
 import { UserPlus } from "lucide-react";
 import ExportButton from "../ui/ExportButton.jsx";
 import SearchInput from "../ui/SearchInput.jsx";
